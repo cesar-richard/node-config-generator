@@ -1,0 +1,31 @@
+{
+  "name": "node-config-generator",
+  "version": "0.1.0",
+  "description": "Nodejs env config generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cesar-richard/node-config-generator.git"
+  },
+  "keywords": [
+    "env",
+    "environement",
+    "configuration",
+    "config",
+    "generator",
+    "auto"
+  ],
+  "author": "Cesar Richard <cesar.richard2@gmail.com>",
+  "license": "CC-BY-NC-ND-4.0",
+  "bugs": {
+    "url": "https://github.com/cesar-richard/node-config-generator/issues"
+  },
+  "homepage": "https://github.com/cesar-richard/node-config-generator#readme",
+  "dependencies": {
+    "commander": "^2.17.0",
+    "inquirer": "^6.0.0"
+  }
+}
