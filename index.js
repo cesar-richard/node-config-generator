@@ -17,6 +17,21 @@ function generateConfig(input) {
 		done('This parameter is required');
 		return;
 	}
+	const commonConfig = {
+		environement: input.envname,
+		common: {
+			database: {
+				database: input.dbname,
+				host: input.dbhost,
+				username: input.dbuser,
+				password: input.dbpassword,
+				dialect: input.dbdialect
+			}
+		}
+	};
+	commonConfig["is"+input.envname.charAt(0).toUpperCase() + input.envname.slice(1)] = true;
+	let config = require(`./templates/${input.envname}`);
+	console.log(commonConfig,config,`./templates/${input.envname}`);
 	return input;	
 }
 
@@ -37,7 +52,7 @@ program
 .option('-P, --dbpassword <password>', 'Database password')
 .option('-b, --dbname <basename>', 'Database name')
 .option('-c, --casservice <url>', 'CAS callback URL')
-.action((envname,options) => {
+.action((options) => {
 	if(program.interactions){
 		let dialectIndex = 0;
 		switch(options.dbdialect){
@@ -137,12 +152,11 @@ program
 		];
 
 		inquirer.prompt(questions).then(answers => {
-			config["is"+answers.envname.charAt(0).toUpperCase() + answers.envname.slice(1)] = true;
 			generateConfig(answers);
-			console.log(config);
 		});
 	}else{
 		let answers ={};
+		answers.envname = typeof options.envname !== 'undefined' ? options.envname : 'developpement';
 		answers.dbdialect = typeof options.dbdialect !== 'undefined' ? options.dbdialect : 'mysql';
 		answers.dbhost = typeof options.dbhost !== 'undefined' ? options.dbhost : 'localhost';
 		answers.dbport = typeof options.dbport !== 'undefined' ? options.dbport : 3306;
@@ -150,7 +164,6 @@ program
 		answers.dbpassword = typeof options.dbpassword !== 'undefined' ? options.dbpassword : '';
 		answers.dbname = typeof options.dbname !== 'undefined' ? options.dbname : '';
 		answers.casservice = typeof options.casservice !== 'undefined' ? options.casservice : '';
-		console.log(options.dbdialect,answers);
 
 		let mustExit = false;
 
@@ -176,6 +189,7 @@ program
 		}
 		if(mustExit)
 			process.exit(1);
+		generateConfig(answers);
 		console.log("done");
 	}
 });

@@ -1,17 +1,9 @@
 const config = {
-	environement: answers.envname,
 	logger: {
 		level: 'error'
 	},
 	common: {
 		port: 3653,
-		database: {
-			database: answers.dbname,
-			host: answers.dbhost,
-			username: answers.dbuser,
-			password: answers.dbpassword,
-			dialect: answers.dbdialect
-		},
 		cas: {
 			is_dev_mode: true,
 			dev_mode_user: 'devuser',
