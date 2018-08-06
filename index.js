@@ -13,12 +13,11 @@ function required (input) {
 }
 
 function generateConfig(input) {
-	var done = this.async();
 	if (input.length === 0) {
 		done('This parameter is required');
 		return;
 	}
-	done(null, true);
+	return input;	
 }
 
 program
@@ -38,7 +37,7 @@ program
 .option('-P, --dbpassword <password>', 'Database password')
 .option('-b, --dbname <basename>', 'Database name')
 .option('-c, --casservice <url>', 'CAS callback URL')
-.action((options) => {
+.action((envname,options) => {
 	if(program.interactions){
 		let dialectIndex = 0;
 		switch(options.dbdialect){
@@ -139,8 +138,45 @@ program
 
 		inquirer.prompt(questions).then(answers => {
 			config["is"+answers.envname.charAt(0).toUpperCase() + answers.envname.slice(1)] = true;
+			generateConfig(answers);
 			console.log(config);
 		});
+	}else{
+		let answers ={};
+		answers.dbdialect = typeof options.dbdialect !== 'undefined' ? options.dbdialect : 'mysql';
+		answers.dbhost = typeof options.dbhost !== 'undefined' ? options.dbhost : 'localhost';
+		answers.dbport = typeof options.dbport !== 'undefined' ? options.dbport : 3306;
+		answers.dbuser = typeof options.dbuser !== 'undefined' ? options.dbuser : '';
+		answers.dbpassword = typeof options.dbpassword !== 'undefined' ? options.dbpassword : '';
+		answers.dbname = typeof options.dbname !== 'undefined' ? options.dbname : '';
+		answers.casservice = typeof options.casservice !== 'undefined' ? options.casservice : '';
+		console.log(options.dbdialect,answers);
+
+		let mustExit = false;
+
+		if(!["mysql","sqlite","postgres","mssql"].includes(answers.dbdialect)){
+			mustExit = true;
+			console.error(`Invalid value for dialect "${answers.dbdialect}"`);
+		}
+		if(answers.dbuser===''){
+			mustExit = true;
+			console.error(`Database user is required`);
+		}
+		if(answers.dbpassword===''){
+			mustExit = true;
+			console.error(`Database password is required`);
+		}
+		if(answers.dbname===''){
+			mustExit = true;
+			console.error(`Database name is required`);
+		}
+		if(answers.casservice===''){
+			mustExit = true;
+			console.error(`CAS service URL is required`);
+		}
+		if(mustExit)
+			process.exit(1);
+		console.log("done");
 	}
 });
 
